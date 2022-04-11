@@ -16,7 +16,7 @@ abstract contract OperatorGuard is Ownable {
      * @param operator The operator to add.
      */
     function addOperator(address operator) external onlyOwner {
-        require(_operators.add(operator), "already a operator");
+        require(_operators.add(operator), "already an operator");
     }
 
     /**
@@ -24,7 +24,7 @@ abstract contract OperatorGuard is Ownable {
      * @param operator The operator to remove.
      */
     function removeOperator(address operator) external onlyOwner {
-        require(_operators.add(operator), "already a ");
+        require(_operators.remove(operator), "already an operator");
     }
 
     /**

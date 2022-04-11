@@ -55,6 +55,32 @@ contract Dropship is InternalContractsHandler, ReentrancyGuard {
     }
 
     /**
+     * @dev Send the ERC20 Token to the accounts which is corresponding to its amount.
+     *      Sender should allow contract to spend his token.
+     * @param tokenAddress The contract address of the ERC20 token.
+     * @param accounts The accounts to recive the tokens.
+     * @param amounts The amount of the token being transfered.
+     * @param totalAmount The total amount of the token being transfered, 
+         should be calculate offchain to save gas.
+     */
+    function erc20bombardmentV2(
+        address tokenAddress,
+        address[] calldata accounts,
+        uint256[] calldata amounts,
+        uint256 totalAmount
+    ) external nonReentrant {
+        require(accounts.length == amounts.length, "accounts != amounts");
+        IERC20 token = IERC20(tokenAddress);
+        token.safeTransferFrom(msg.sender, address(this), totalAmount);
+        for (uint256 index = 0; index < accounts.length; ++index) {
+            uint256 amount = amounts[index];
+            token.safeTransfer(accounts[index], amount);
+            totalAmount -= amount;
+        }
+        if (totalAmount > 0) token.safeTransfer(msg.sender, totalAmount);
+    }
+
+    /**
      * @dev Send the ERC721 Token to the accounts which is corresponding to its amount.
      *      Sender should allow contract to spend his token.
      * @param tokenAddress The contract address of the ERC721 token.
